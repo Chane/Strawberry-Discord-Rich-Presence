@@ -44,7 +44,9 @@ def test_import_and_init_with_mocked_external_dependencies(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["presenceUpdater.py"])
 
     sys.modules.pop("presenceUpdater", None)
-    module_path = Path(__file__).resolve().parents[1] / "presenceUpdater.py"
+    repo_root = Path(__file__).resolve().parents[1]
+    monkeypatch.syspath_prepend(str(repo_root))
+    module_path = repo_root / "presenceUpdater.py"
     spec = importlib.util.spec_from_file_location("presenceUpdater", module_path)
     assert spec is not None
     assert spec.loader is not None
