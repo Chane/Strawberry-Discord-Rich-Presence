@@ -1,23 +1,68 @@
-# Custom Discord Rich Presence
+# Strawberry Discord Rich Presence
 
-Install dependencies with
+This script reads currently playing track metadata from Strawberry (via MPRIS/DBus),
+queries Discogs for release art, and updates your Discord Rich Presence.
 
-`pip install -r dependencies.txt`
+## Requirements
 
-Run with
+- Linux desktop session with DBus
+- Strawberry Music Player
+- Python 3.10+
 
-`python3 main.py`
+## Setup (with venv)
 
-Needs a config.py file in root of repository containing:
+1. Create and activate a virtual environment:
 
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 ```
-APPLICATION_ID = ""
-DISCOG_USER_TOKEN = ""
+
+2. Install dependencies:
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-Where `APPLICATION_ID` is obtained from creating an application on Discord and `DISCOG_USER_TOKEN` is obtained by creating an API account on discog.
+3. Configure credentials:
 
----
-## Run as a background service on Ubuntu
+- `config.py` contains safe defaults and is tracked.
+- `config_local.py` is for local secrets and is gitignored.
 
-https://websofttechs.com/tutorials/how-to-setup-python-script-autorun-in-ubuntu-18-04/
+Edit `config_local.py` and set:
+
+```python
+APPLICATION_ID = "your_discord_application_id"
+DISCOG_USER_TOKEN = "your_discogs_user_token"
+```
+
+`APPLICATION_ID` comes from your Discord developer application.
+`DISCOG_USER_TOKEN` comes from your Discogs account API settings.
+
+## Run
+
+```bash
+python3 presenceUpdater.py
+```
+
+Optional logging flags:
+
+```bash
+python3 presenceUpdater.py --verbose
+python3 presenceUpdater.py --debug
+```
+
+## Testing
+
+```bash
+pytest
+```
+
+## CI
+
+GitHub Actions workflow at `.github/workflows/build.yml` runs:
+
+- dependency install in a venv
+- flake8 lint checks
+- pytest

@@ -155,3 +155,12 @@ class PresenceUpdater:
                         start=start)
 
             time.sleep(1)
+
+
+def main():
+    updater = PresenceUpdater()
+    updater.run()
+
+
+if __name__ == "__main__":
+    main()
