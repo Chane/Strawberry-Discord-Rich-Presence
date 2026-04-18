@@ -1,6 +1,7 @@
-import importlib
+import importlib.util
 import sys
 import types
+from pathlib import Path
 
 
 class _FakeDBusException(Exception):
@@ -43,7 +44,13 @@ def test_import_and_init_with_mocked_external_dependencies(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["presenceUpdater.py"])
 
     sys.modules.pop("presenceUpdater", None)
-    module = importlib.import_module("presenceUpdater")
+    module_path = Path(__file__).resolve().parents[1] / "presenceUpdater.py"
+    spec = importlib.util.spec_from_file_location("presenceUpdater", module_path)
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["presenceUpdater"] = module
+    spec.loader.exec_module(module)
 
     updater = module.PresenceUpdater()
 
